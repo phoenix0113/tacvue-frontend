@@ -1,25 +1,28 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import Image from "next/image";
-import { Spinner, Modal, Button } from "react-bootstrap";
-import { HQ } from "@models/routes";
-import {
-  handleEntityMint,
-  approveEntity,
-  getAccount,
-  checkEntityCardExist,
-} from "@services/contract";
-import { uploadToIPFS } from "@services/general";
+import { ethers, Contract } from "ethers";
+import Terran721 from "artifacts/Terran721.json";
 import { LOGO_IMAGE } from "@styles/assets";
+import { Spinner } from "react-bootstrap";
+import { HQ } from "@models/routes";
+
+declare global {
+  interface Window {
+    ethereum: ethers.providers.ExternalProvider;
+  }
+}
+
+// Smart Contract Deploy Address
+const CONTRACT_ADDRESS: string = process.env.CONTRACT_ADDRESS || "";
 
 const CreateCardPage: NextPage = () => {
   // Router
   const router = useRouter();
 
   // The state management
-  const [isLoading, setLoading] = useState(false);
-  const [showModal, setShowModal] = useState(false);
+  const [isLoadng, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [mintStep, setMintStep] = useState(0);
   const [multiverseName, setMultiverseName] = useState("");
@@ -29,14 +32,28 @@ const CreateCardPage: NextPage = () => {
 
   // The function to get current date
   const getCurrentDate = () => {
-    const today = new Date();
-    const dd = String(today.getDate()).padStart(2, "0");
-    const mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
-    const yyyy = today.getFullYear();
-    const birthday: string = mm + "-" + dd + ", " + yyyy;
+    let today = new Date();
+    let dd = String(today.getDate()).padStart(2, "0");
+    let mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
+    let yyyy = today.getFullYear();
+    let birthday: string = mm + "-" + dd + ", " + yyyy;
 
     return birthday;
   };
+
+  // function for get error message from metamask
+  function showErrorMessage(message: string, err: any) {
+    let error_status = JSON.parse(JSON.stringify(err));
+    let error_message = "";
+    if (error_status.message) {
+      error_message = error_status.message;
+    } else {
+      error_message = error_status.error.message;
+    }
+
+    error_message = error_message.replace("execution reverted: ", "");
+    setErrorMessage(message + error_message);
+  }
 
   const [multiverseBirthday, setMultiverseBirthday] = useState(getCurrentDate());
   const [eYear, setEYear] = useState(0);
@@ -60,13 +77,22 @@ const CreateCardPage: NextPage = () => {
     photoFileRef?.current?.click();
   };
 
-  // The function to get address
-  const setMintStepOne = async () => {
-    setLoading(true);
-    setMintStep(1);
-    const address = await getAccount();
-    setESignature(address);
-    setLoading(false);
+  // The function to get contract
+  const requestContract = () => {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const contract = new Contract(CONTRACT_ADDRESS, Terran721.abi, signer);
+
+    return contract;
+  };
+
+  // The function to get user's Metamask wallet address
+  const requestAccount = async () => {
+    if (window.ethereum?.request) return window.ethereum.request({ method: "eth_requestAccounts" });
+
+    throw new Error(
+      "Missing install Metamask. Please access https://metamask.io/ to install extension on your browser"
+    );
   };
 
   const [ipfsHash, setIpfsHash] = useState("");
@@ -85,12 +111,36 @@ const CreateCardPage: NextPage = () => {
         nftCount,
       };
 
-      const ipfsHash = await uploadToIPFS(photoFile, cardInfo);
-      console.log(ipfsHash);
+      const data: any = new FormData();
+      data.append("cardInfo", JSON.stringify(cardInfo));
+      data.append("photoFile", photoFile);
 
-      setIpfsHash(ipfsHash);
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: data,
+      });
+
+      const jsonResponse = await response.json();
+      setIpfsHash(jsonResponse.ipfsHash);
       setLoading(false);
       setMintStep(2);
+    }
+  };
+
+  // The function to mint of Entity
+  const handleMint = async () => {
+    const [address] = await requestAccount();
+    console.log(address);
+    const contract = requestContract();
+    try {
+      setLoading(true);
+      await contract.mint();
+      setLoading(false);
+      router.push("/" + HQ);
+    } catch (err: any) {
+      setLoading(false);
+      console.log(err);
+      showErrorMessage("Could not mint this NFT. ", err);
     }
   };
 
@@ -98,19 +148,6 @@ const CreateCardPage: NextPage = () => {
   const reset = () => {
     setErrorMessage("");
     router.push("/");
-  };
-
-  // The function for mint
-  const mint = async () => {
-    setLoading(true);
-    try {
-      await handleEntityMint(ipfsHash);
-      setShowModal(true);
-    } catch (err: any) {
-      console.error("Mint the card:   ", err);
-    }
-
-    setLoading(false);
   };
 
   // The border element for first and last step
@@ -151,59 +188,13 @@ const CreateCardPage: NextPage = () => {
     );
   };
 
-  const handleModalClose = () => {
-    setShowModal(false);
-  };
-
-  const handleApprove = async () => {
-    setLoading(true);
-    setShowModal(false);
-    await approveEntity();
-    setLoading(false);
-    router.push("/" + HQ);
-  };
-
-  // The Modal element
-  const ModalContent = () => {
-    return (
-      <Modal show={showModal} onHide={handleModalClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Approve the Entity Card</Modal.Title>
-        </Modal.Header>
-        <Modal.Footer>
-          <Button variant="primary" onClick={handleApprove}>
-            Approve
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    );
-  };
-
-  const checkPermission = async () => {
-    try {
-      setLoading(true);
-      const isExist = await checkEntityCardExist();
-      setLoading(false);
-      if (isExist) {
-        router.push("/" + HQ);
-      }
-    } catch (err: any) {
-      console.log("Check Entity Card exit: ", err);
-      router.push("/");
-    }
-  };
-
-  useEffect(() => {
-    checkPermission();
-  }, []);
-
   return (
     <div className="he-100 d-flex justify-center align-center full-content">
       <div className="full-content position-absolute d-flex justify-center">
         <div className="create-card-content w-available z-back"></div>
       </div>
 
-      {isLoading ? (
+      {isLoadng ? (
         <Spinner animation="border" variant="info" />
       ) : errorMessage === "" ? (
         <div className="position-relative">
@@ -217,7 +208,7 @@ const CreateCardPage: NextPage = () => {
                   <br /> your unique Entity to
                   <br /> represent you in the multiverse.
                 </div>
-                <button className="card-button cursor-pointer" onClick={setMintStepOne}>
+                <button className="card-button cursor-pointer" onClick={() => setMintStep(1)}>
                   Continue
                 </button>
               </div>
@@ -368,7 +359,7 @@ const CreateCardPage: NextPage = () => {
                     <br />
                     <br /> Do you want it proceed.?
                   </div>
-                  <button className="card-button cursor-pointer" onClick={mint}>
+                  <button className="card-button cursor-pointer" onClick={handleMint}>
                     Mint Entity
                   </button>
                 </div>
@@ -379,7 +370,6 @@ const CreateCardPage: NextPage = () => {
       ) : (
         <ErrorContent />
       )}
-      <ModalContent />
     </div>
   );
 };

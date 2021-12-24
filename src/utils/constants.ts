@@ -181,6 +181,3 @@ export const TACVUE = "Tacvue";
 export const UPLOAD_IMAGE_PATH = "uploads/image";
 export const UPLOAD_JSON_PATH = "uploads/json";
 export const PINATA_API_URL = "https://gateway.pinata.cloud/ipfs/";
-export const ERC721_CONTRACT_ADDRESS = "0x90Af0c3971aCC9346eE4A903Aa51cD1105257dd5";
-export const ENTITY_ERC721_CONTRACT_ADDRESS = "0x0951Dbf6e4aFbc8b8A55eb5b65c817147b03548A";
-export const MARKETPLACE_CONTRACT_ADDRESS = "0x4599E01FAf237BE226258DD8BC0920BBbbc459Cb";
