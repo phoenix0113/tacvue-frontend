@@ -11,96 +11,124 @@ import {
   CREATE_CARD,
 } from "@models/routes";
 import { LOGO_IMAGE } from "@styles/assets";
-import { Spinner } from "react-bootstrap";
+import { CSSTransition } from 'react-transition-group';
+// import BgVideo from "@components/BgVideo";
+
+const bg = "/video/Hq.mp4";
 
 const HQPage: NextPage = () => {
   const router = useRouter();
-
-  const [isLoading, setLoading] = useState(false);
-  const [isRotating, setRotating] = useState(true);
-  const [backgroundSize, setBackgroundSize] = useState("background-contain");
   const [multiverseName, setMultiverseName] = useState("");
   const [multiverseTag, setMultiverseTag] = useState("");
   const [eSignature, setESignature] = useState("");
-  const [cardType, setCardType] = useState("");
-  const [multiverseBirthday, setMultiverseBirthday] = useState("");
+  // const [cardType, setCardType] = useState("");
+  const [multiverseBirthday, setMultiverseBirthday] = useState('2021-12-11');
   const [eYear, setEYear] = useState(0);
   const [nftCount, setNFTCount] = useState(0);
   const [photoFile, setPhotoFile] = useState("");
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [isMinted, setIsMinted] = useState(false);
+  const [backgroundSize, setBackgroundSize] = useState("background-contain");
+  const videoRef = React.useRef();
+
+  useEffect(() => {
+    const onResize = () => {
+      if (window.innerHeight / window.innerWidth > 0.5625) {
+        if (videoRef.current) {
+          videoRef.current.style.objectFit = "contain";
+        }
+        setBackgroundSize("background-contain");
+      } else {
+        if (videoRef.current) {
+          videoRef.current.style.objectFit = "cover";
+
+        }
+        setBackgroundSize("background-cover");
+      }
+    };
+
+    window.addEventListener('resize', onResize);
+    const timer = setTimeout(() => {
+      setIsLoaded(true);
+      onResize();
+    }, isMinted ? 10500 : 0);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('resize', onResize);
+    }
+  }, []);
 
   // The border element for first and last step
-  const SecondBorder = () => {
-    return (
-      <>
-        <div className="w-100 h-100 position-absolute border-line second-step z-back clip-content" />
-        <div className="top-right-border triangle position-absolute" />
-        <div className="bottom-left-border triangle position-absolute" />
-      </>
-    );
-  };
+  // const SecondBorder = () => {
+  //   return (
+  //     <>
+  //       <div className="w-100 h-100 position-absolute border-line second-step z-back clip-content" />
+  //       <div className="top-right-border triangle position-absolute" />
+  //       <div className="bottom-left-border triangle position-absolute" />
+  //     </>
+  //   );
+  // };
 
   // The card element
   const CardContent = () => {
     return (
-      <div className="col-md-12">
-        <SecondBorder />
-        <div className="border-content w-100 second-step position-absolute h-100 border-line z-back text-center" />
-        <div className="row mx-0">
-          <div className="text-center col-md-4 pt-2 px-2">
-            <div className="drop-card-content w-100 h-100 position-relative cursor-pointer">
-              {photoFile !== "" && (
-                <Image
-                  src={photoFile}
-                  className="card-photo"
-                  layout="fill"
-                  alt="responsive"
-                  loading="lazy"
-                />
-              )}
-
-              <div className="position-absolute m-1 top-0">
-                <Image src={LOGO_IMAGE} width={20} height={20} alt="responsive" loading="lazy" />
+      <div className="col-md-12 h-100">
+        {/* <SecondBorder /> */}
+        {/* <div className="border-content w-100 second-step position-absolute h-100 border-line z-back text-center" /> */}
+        <div className="row mx-0 h-100 d-flex flex-column justify-content-evenly">
+          <div className="col-md-12 p-0 position-relative d-flex justify-content-center">
+            <div className="m-1 top-0 start-0 position-absolute">
+              <Image src={LOGO_IMAGE} width={40} height={40} alt="responsive" loading="lazy" />
+            </div>
+            <div className="card-title fs-4 py-1">Entity</div>          
+          </div>
+          <div className="col-md-12 p-0">
+            <div className="row m-0 h-100">
+              <div className="col-md-6 pt-2 px-2">
+                <div className="drop-card-content w-100 cursor-pointer position-relative">
+                  {photoFile !== "" && (
+                    <Image
+                      src={photoFile}
+                      className="card-photo"
+                      layout="fill"
+                      alt="responsive"
+                      loading="lazy"
+                    />
+                  )}
+                </div>
+              </div>
+              <div className="col-md-6 pt-2 px-2">
+                <div className="w-100">
+                  <div className="card-text fs-6">{multiverseName}</div>
+                </div>
+                <div className="w-100">
+                  <div className="card-text fs-6">{multiverseTag}</div>
+                </div>
+                <div className="w-100">
+                  <div className="card-text fs-6 overflow-hidden">{eSignature}</div>
+                </div>
               </div>
             </div>
           </div>
-
-          <div className="col-md-8 pt-2 px-2">
-            <div className="col-md-12 col-sm-12 d-flex justify-center align-center h-100">
-              <div className="w-100 d-flex justify-center align-center">
-                <div className="card-text p-2">{multiverseName}</div>
+          <div className="col-md-12 p-0">
+            <div className="row mx-1">
+              <div className="col-md-3 px-0">
+                <div className="w-100 text-center">
+                  <div className="card-text fs-7">{eYear}</div>
+                  <div className="card-label fs-7">Season</div>
+                </div>
               </div>
-            </div>
-          </div>
-        </div>
-        <div className="col-md-12 pt-2 px-2">
-          <div className="w-100">
-            <div className="card-text fs-6 py-1">Tag: {multiverseTag}</div>
-          </div>
-          <div className="w-100">
-            <div className="card-text py-1 fs-6 overflow-hidden">Signature: {eSignature}</div>
-          </div>
-          <div className="w-100">
-            <div className="card-text py-1 fs-6">Type: {cardType}</div>
-          </div>
-        </div>
-        <div className="col-md-12 p-0">
-          <div className="row mx-1">
-            <div className="col-md-5 px-0">
-              <div className="w-100 text-center">
-                <div className="card-text py-1 fs-7">{multiverseBirthday}</div>
-                <div className="card-label py-1 fs-7">Birthday</div>
+              <div className="col-md-5 px-0">
+                <div className="w-100 text-center">
+                  <div className="card-text fs-7">{multiverseBirthday}</div>
+                  <div className="card-label fs-7">Birthday</div>
+                </div>
               </div>
-            </div>
-            <div className="col-md-3 px-0">
-              <div className="w-100 text-center">
-                <div className="card-text py-1 fs-7">{eYear}</div>
-                <div className="card-label py-1 fs-7">E-Year</div>
-              </div>
-            </div>
-            <div className="col-md-4 px-0">
-              <div className="w-100 text-center">
-                <div className="card-text py-1 fs-7">{nftCount}</div>
-                <div className="card-label py-1 fs-7">NFT Count</div>
+              <div className="col-md-4 px-0">
+                <div className="w-100 text-center">
+                  <div className="card-text fs-7">{nftCount}</div>
+                  <div className="card-label fs-7">Level</div>
+                </div>
               </div>
             </div>
           </div>
@@ -111,9 +139,8 @@ const HQPage: NextPage = () => {
 
   const checkPermission = async () => {
     try {
-      setLoading(true);
       const isExist = await checkEntityCardExist();
-      setLoading(false);
+
       if (!isExist) {
         router.push("/" + CREATE_CARD);
       }
@@ -122,18 +149,8 @@ const HQPage: NextPage = () => {
       router.push("/");
     }
   };
-
+  
   useEffect(() => {
-    checkPermission();
-  }, []);
-
-  useEffect(() => {
-    checkPermission();
-
-    setTimeout(() => {
-      setRotating(false);
-    }, 2000);
-
     async function getUserdata() {
       const jsonData = await getCardData();
       const attributes = jsonData.attributes;
@@ -143,75 +160,90 @@ const HQPage: NextPage = () => {
       setMultiverseTag(attributes.multiverseTag);
       setESignature(attributes.eSignature);
       setEYear(attributes.eYear);
-      setCardType(attributes.cardType);
+      // setCardType(attributes.cardType);
       setNFTCount(attributes.nftCount);
       setPhotoFile(jsonData.image.replace("ipfs://", "https://dweb.link/ipfs/"));
     }
-
+    setIsMinted(localStorage.getItem('mint-approved') === 'TRUE');
+    checkPermission();
     getUserdata();
-
-    const updateWindowDimensions = () => {
-      if (window.innerWidth * 9 > window.innerHeight * 16) {
-        setBackgroundSize("background-cover");
-      } else {
-        setBackgroundSize("background-contain");
-      }
-    };
-
-    window.addEventListener("resize", updateWindowDimensions);
-
-    return () => window.removeEventListener("resize", updateWindowDimensions);
   }, []);
 
   return (
-    <div className="he-100 d-flex justify-center align-center full-content col-md-12 position-relative">
-      {isLoading ? (
-        <Spinner animation="border" variant="info" />
-      ) : (
-        <>
-          <div className="full-content position-absolute d-flex justify-center">
-            <div className={`hq-content w-available z-back ${backgroundSize}`}></div>
+    <>
+    {!isMinted &&
+      <div className="full-content position-absolute d-flex justify-center">
+        <div className={`hq-content w-available z-back ${backgroundSize}`}></div>
+      </div>
+    }
+    {isMinted &&
+      <video
+        ref={videoRef}
+        autoPlay
+        loop={false}
+        muted
+        style={{
+          position: "absolute",
+          width: "100%",
+          left: "50%",
+          top: "50%",
+          height: "100%",
+          objectFit: "cover",
+          transform: "translate(-50%, -50%)",
+          zIndex: "-1",
+        }}
+      >
+        <source src={bg} type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+    }
+      {/* <BgVideo videoSource={bg} loop={false} /> */}
+      <CSSTransition in={isLoaded} unmountOnExit timeout={1000}>
+        <div className="justify-center d-flex align-center border border-light rounded-3 text-light hq-exchange hq-card-fade">
+          <div
+            className="cursor-pointer w-100 h-100 d-flex justify-center align-center"
+            onClick={() => router.push("/" + MARKETPLACE)}
+          >
+            Exchange
           </div>
-          <div className={`d-flex position-absolute w-100 px-0-5 ${backgroundSize}`}>
-            <div className="justify-center d-flex align-center border border-light rounded-3 text-light hq-exchange">
-              <div
-                className="cursor-pointer w-100 h-100 d-flex justify-center align-center"
-                onClick={() => router.push("/" + MARKETPLACE)}
-              >
-                Exchange
-              </div>
-            </div>
-            <div className="justify-center d-flex align-center border border-light rounded-3 text-light hq-control-center">
-              <div
-                className="cursor-pointer w-100 h-100 d-flex justify-center align-center"
-                onClick={() => router.push("/" + CONTROLCENTER)}
-              >
-                Control Center
-              </div>
-            </div>
-            <div className={`w-18 position-relative hq-card ${isRotating ? "card-rotate" : ""}`}>
-              <CardContent />
-            </div>
-            <div className="justify-center d-flex align-center border border-light rounded-3 text-light hq-communications">
-              <div
-                className="cursor-pointer w-100 h-100 d-flex justify-center align-center"
-                onClick={() => router.push("/" + COMMUNICATIONS)}
-              >
-                Communications
-              </div>
-            </div>
-            <div className="justify-center d-flex align-center border border-light rounded-3 text-light hq-creator-lab">
-              <div
-                className="cursor-pointer w-100 h-100 d-flex justify-center align-center"
-                onClick={() => router.push("/" + CREATORLAB)}
-              >
-                Creator Lab
-              </div>
-            </div>
+        </div>
+      </CSSTransition>
+      <CSSTransition in={isLoaded} unmountOnExit timeout={1000}>
+        <div className="justify-center d-flex align-center border border-light rounded-3 text-light hq-control-center hq-card-fade">
+          <div
+            className="cursor-pointer w-100 h-100 d-flex justify-center align-center"
+            onClick={() => router.push("/" + CONTROLCENTER)}
+          >
+            Control Center
           </div>
-        </>
-      )}
-    </div>
+        </div>
+      </CSSTransition>
+      <CSSTransition in={isLoaded} unmountOnExit timeout={1000}>
+        <div className="justify-center d-flex align-center border border-light rounded-3 text-light hq-communications hq-card-fade">
+          <div
+            className="cursor-pointer w-100 h-100 d-flex justify-center align-center"
+            onClick={() => router.push("/" + COMMUNICATIONS)}
+          >
+            Communications
+          </div>
+        </div>
+      </CSSTransition>
+      <CSSTransition in={isLoaded} unmountOnExit timeout={1000}>
+        <div className="justify-center d-flex align-center border border-light rounded-3 text-light hq-creator-lab hq-card-fade">
+          <div
+            className="cursor-pointer w-100 h-100 d-flex justify-center align-center"
+            onClick={() => router.push("/" + CREATORLAB)}
+          >
+            Creator Lab
+          </div>
+        </div>
+      </CSSTransition>
+      <CSSTransition in={isLoaded} unmountOnExit timeout={1000}>
+        <div className={`hq-card-container hq-card-fade ${!isMinted && 'hq-card-bg'}`}>
+          <CardContent />
+        </div>
+      </CSSTransition>
+    </>
   );
 };
 

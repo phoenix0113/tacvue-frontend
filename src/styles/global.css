@@ -22,6 +22,88 @@ a {
   color: black;
 }
 
+.justify-center {
+  justify-content: center;
+}
+
+.justify-around {
+  justify-content: space-around;
+}
+
+.align-center {
+  align-items: center;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.br-25 {
+  border-radius: 50px;
+}
+
+.p-30 {
+  padding: 30px;
+}
+
+.color-grey {
+  color: grey;
+}
+
+.pos-relative {
+  position: relative;
+}
+
+.pos-absolute {
+  position: absolute !important;
+}
+
+.wallet-icon {
+  top: 10px;
+  left: 20px;
+}
+
+.he-100 {
+  height: 100vh !important;
+}
+
+.h-100 {
+  height: 100%;
+}
+
+.back-black {
+  background: black;
+}
+
+.mint-input {
+  background: #3a3838;
+  color: #b9b9b9;
+  border: none;
+}
+
+.color-white {
+  color: white;
+}
+
+.multiverse-btn {
+  border-style: solid;
+  border-width: 4px 4px 4px 4px;
+  border-color: #3b3838;
+  background-color: #111111;
+  font-family: "Play", Sans-serif;
+  color: #ffffff;
+  font-size: 25px;
+  font-weight: 600;
+  display: inline-flex;
+  font-size: 25px;
+  padding: 16px 28px;
+  line-height: 1.3333;
+}
+
+.card {
+  color: black;
+}
+
 .create-button {
   background-color: white;
   border: none;
@@ -46,7 +128,7 @@ a {
 }
 
 .navbar-custom {
-  background-color: rgb(1, 1, 59);
+  background-color: #20222c;
   padding-top: 25px;
   padding-bottom: 25px;
   width: 100%;
@@ -65,18 +147,6 @@ a {
   text-align: center;
 }
 
-.justify-center {
-  justify-content: center;
-}
-
-.justify-around {
-  justify-content: space-around;
-}
-
-.align-center {
-  align-items: center;
-}
-
 .full-content {
   width: 100vw !important;
   height: 100%;
@@ -92,32 +162,11 @@ a {
 }
 
 .create-card-content {
-  background: url("/images/EntityMintBack.png") no-repeat center center fixed;
+  background: url("/images/HQRoom.jpg") no-repeat center center fixed;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
-}
-
-.pos-relative {
-  position: relative;
-}
-
-.pos-absolute {
-  position: absolute !important;
-}
-
-.wallet-icon {
-  top: 10px;
-  left: 20px;
-}
-
-.he-100 {
-  height: 100vh !important;
-}
-
-.back-black {
-  background: black;
 }
 
 .card-button {
@@ -236,6 +285,11 @@ a {
   border: 5px solid #71e6ff;
 }
 
+.card-title {
+  color: #71e6ff;
+  font-size: 2rem;
+}
+
 .card-text {
   color: #71e6ff;
   font-size: 1.25rem;
@@ -266,4 +320,240 @@ a {
     29px 100%,
     0px calc(100% - 29px)
   );
+}
+
+.hq-content {
+  background: url("/images/HQRoom.jpg") no-repeat center center fixed;
+  -webkit-background-size: contain;
+  -moz-background-size: contain;
+  -o-background-size: contain;
+  background-size: contain;
+}
+
+.w-max {
+  width: max-content;
+}
+
+.card-label {
+  color: #71e6ff;
+  font-size: 1rem;
+}
+
+.card-rotate {
+  -webkit-animation: spin 0.3s linear infinite;
+  -moz-animation: spin 0.3s linear infinite;
+  animation: spin 0.3s linear infinite;
+}
+
+@-moz-keyframes spin {
+  100% {
+    -moz-transform: rotate3d(0, 1, 0, 360deg);
+  }
+}
+
+@-webkit-keyframes spin {
+  100% {
+    -webkit-transform: rotate3d(0, 1, 0, 360deg);
+  }
+}
+
+@keyframes spin {
+  100% {
+    -webkit-transform: rotate3d(0, 1, 0, 360deg);
+    transform: rotate3d(0, 1, 0, 360deg);
+  }
+}
+
+.card-back {
+  background: url("/images/NFTIDCardBig.png") no-repeat center center fixed;
+  -webkit-background-size: contain;
+  -moz-background-size: contain;
+  -o-background-size: contain;
+  background-size: contain;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.w-18 {
+  width: 18%;
+}
+
+.px-0-5 {
+  padding: 0 3%;
+}
+
+.h-24 {
+  height: 24vh;
+}
+
+.top-31 {
+  top: 31vh;
+}
+
+.z-10 {
+  z-index: 10;
+}
+
+.mktplace-bg {
+  background-color: rgb(139, 139, 139);
+}
+
+.search-bar {
+  background-color: #2f3242;
+  border-color: #f6cfcf00;
+  border-width: 1px 1px 1px 1px;
+  border-radius: 49px;
+  min-height: 40px;
+  display: flex;
+}
+
+.mktplace-bg {
+  background-color: rgb(139, 139, 139);
+}
+
+.search-bar {
+  background-color: #2f3242;
+  border-color: #f6cfcf00;
+  border-width: 1px 1px 1px 1px;
+  border-radius: 49px;
+  min-height: 40px;
+  display: flex;
+}
+
+.creator-lab-bg {
+  background-color: #181818;
+}
+
+.creator-lab-bg {
+  background-color: #181818;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.w-10 {
+  width: 15%;
+}
+
+.w-20 {
+  width: 20%;
+}
+
+.w-18 {
+  width: 18%;
+}
+
+.px-0-5 {
+  padding: 0 3%;
+}
+
+.h-24 {
+  height: 24vh;
+}
+
+.top-31 {
+  top: 31vh;
+}
+
+.z-10 {
+  z-index: 10;
+}
+
+.hq-card {
+  width: 18vw;
+  margin-top: 0vw;
+  max-height: 20vw;
+}
+
+.drop-card-content {
+  min-width: 5rem;
+  border: 2px solid #71e6ff;
+  max-height: 10rem;
+  min-height: 5rem;
+  margin: auto;
+}
+
+.fs-7 {
+  font-size: 0.825rem;
+}
+
+.background-cover {
+  background-size: cover !important;
+  margin-top: -5vw !important;
+}
+
+.background-contain {
+  background-size: contain !important;
+  margin-top: 0 !important;
+}
+
+.hq-exchange {
+  background: url("/images/Exchange.jpg") no-repeat center center;
+  background-size: cover;
+  position: absolute;
+  height: 11vw;
+  width: 19vw;
+  left: 14.7vw;
+  top: calc(50% - 4vw);
+  transform: translate(-50%, -50%) perspective(19vw) rotate3d(0, 1, -0.2, 15deg);
+}
+
+.hq-control-center {
+  background: url("/images/ControlCenter.jpg") no-repeat center center;
+  background-size: cover;
+  position: absolute;
+  height: 9vw;
+  width: 15vw;
+  left: 33.3vw;
+  top: calc(50% - 4vw);
+  transform: translate(-50%, -50%) perspective(32vw) rotate3d(0, 1, -0.1, 22deg);
+}
+
+.hq-communications {
+  background: url("/images/Communications.jpg") no-repeat center center;
+  background-size: cover;
+  position: absolute;
+  height: 8vw;
+  width: 14vw;
+  left: 66.5vw;
+  top: calc(50% - 4vw);
+  transform: translate(-50%, -50%) perspective(10vw) rotate3d(0, 1, -0.1, -10deg);
+}
+
+.hq-creator-lab {
+  background: url("/images/CreatorLab.jpg") no-repeat center center;
+  background-size: cover;
+  position: absolute;
+  height: 11vw;
+  width: 18vw;
+  left: 85.3vw;
+  top: calc(50% - 4vw);
+  transform: translate(-50%, -50%) perspective(13vw) rotate3d(0, 1, -0.2, -10deg);
+}
+
+.hq-card-container {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  padding: 10px;
+  width: 18vw;
+  height: 19.15vw;
+}
+
+.hq-card-bg {
+  background: url(/images/MetalEntityBlank.png) no-repeat center center;
+  background-size: cover;
+}
+
+.hq-card-fade.enter {
+  opacity: 0;
+}
+
+.hq-card-fade.enter-active {
+  opacity: 1;
+  transition: opacity 1500ms;
 }
